@@ -1,0 +1,19 @@
+releaser:
+    module_name: minchin.pelican.readers.tasknotes
+    pypi_name: minchin.pelican.readers.tasknotes
+    here: .
+    docs: none
+    test: test
+    source: minchin
+    changelog: CHANGELOG.rst
+    version: minchin/pelican/readers/tasknotes/constants.py
+    test_command: none
+    version_bump: none
+    extra_packages:
+        test:
+            - pelican
+            - setuptools
+            - wheel
+            - semantic-version
+            - markdown
+        pypi:
