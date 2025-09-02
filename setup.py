@@ -49,9 +49,7 @@ PACKAGES = setuptools.find_namespace_packages(
 INSTALL_REQUIRES = [
     "minchin.pelican.plugins.autoloader >= 1.2.0",
     "pelican",
-    "markupsafe",
-    "jinja2",
-    "markdown",
+    "minchin.pelican.readers.commonmark",
 ]
 
 EXTRA_REQUIRES = {
