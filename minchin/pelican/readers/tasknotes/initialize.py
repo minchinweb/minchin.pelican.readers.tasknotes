@@ -11,8 +11,8 @@ def check_settings(pelican):
     """
     logger.debug("%s massaging settings, setting defaults." % LOG_PREFIX)
 
-    if not "TASKNOTES_FOLDER" in pelican.settings.keys():
-        pelican.settings["TASKNOTES_FOLDER"] = "micro"
+    if "TASKNOTES_FOLDER" not in pelican.settings.keys():
+        pelican.settings["TASKNOTES_FOLDER"] = "tasks"
         logger.debug(
             '%s TASKNOTES_FOLDER set to "%s"'
             % (LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"])
@@ -23,7 +23,7 @@ def check_settings(pelican):
             % (LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"])
         )
 
-    if not "TASKNOTES_SAVE_AS" in pelican.settings.keys():
+    if "TASKNOTES_SAVE_AS" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SAVE_AS"] = pelican.settings["ARTICLE_SAVE_AS"]
         logger.debug(
             '%s TASKNOTES_SAVE_AS set to "%s"'
@@ -35,7 +35,7 @@ def check_settings(pelican):
             % (LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"])
         )
 
-    if not "TASKNOTES_SLUG" in pelican.settings.keys():
+    if "TASKNOTES_SLUG" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SLUG"] = "u{date:%Y%m%d%H%M}"
         logger.debug(
             '%s TASKNOTES_SLUG set to "%s"'
@@ -47,7 +47,7 @@ def check_settings(pelican):
             % (LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"])
         )
 
-    if not "TASKNOTES_URL" in pelican.settings.keys():
+    if "TASKNOTES_URL" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_URL"] = pelican.settings["ARTICLE_URL"]
         logger.debug(
             '%s TASKNOTES_URL set to "%s"'

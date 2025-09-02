@@ -9,8 +9,10 @@ if TYPE_CHECKING:
     from pelican.generators import ArticlesGenerator
 
 from pelican.contents import Article
-from pelican.readers import MarkdownReader  # BaseReader
+# from pelican.readers import MarkdownReader  # BaseReader
 from pelican.utils import order_content
+
+from minchin.pelican.readers.commonmark.reader import MDITReader
 
 from .constants import DEFAULT_TASKNOTES_CATEGORY, LOG_PREFIX
 
@@ -32,22 +34,23 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
     # Author, category, and tags are objects, not strings, so they need to
     # be handled using myBaseReader's process_metadata() function.
     # myBaseReader = BaseReader(settings)
-    myMarkdownReader = MarkdownReader(settings)
+    # myMarkdownReader = MarkdownReader(settings)
+    myMarkdownReader = MDITReader(settings)
     myBaseReader = myMarkdownReader
 
     file_extensions = [
         # "txt",
-    ] + MarkdownReader.file_extensions
+    ] + myMarkdownReader.file_extensions
 
     for post in articleGenerator.get_files(
         paths=settings["TASKNOTES_FOLDER"], extensions=file_extensions
     ):
         post = settings["PATH"] + os.sep + post
 
-        
-        
+        # content, metadata = myMarkdownReader.read(source_path=post)
+        content, metadata = myMarkdownReader.read(filename=post)
 
-        content, metadata = myMarkdownReader.read(source_path=post)
+        logger.debug(f"{LOG_PREFIX} {metadata}")
 
         new_article_metadata = {
             "category": myBaseReader.process_metadata(
@@ -101,7 +104,6 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
                     content = content.removesuffix("</p>") + " " + tag_link + "</p>"
 
 
-
         # Assemble Tasks-style line
         # this is the presented as the "title" of the todo item, with various
         # metadata directly embedded. Example:
@@ -113,7 +115,9 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # this is the todo item, as would be read in the todo.txt format
         todotxt_line = ""
 
-        if new_article_metadata["status"].lower() in ["in-progress", "in progress"]:
+        if "status" not in new_article_metadata:
+            pass
+        elif new_article_metadata["status"].lower() in ["in-progress", "in progress"]:
             todo_title += '<span title="In Progress">[/]</span>'
         elif new_article_metadata["status"].lower() in ["cancelled", ]:
             todo_title += '<span title="Cancelled">[-]</span>'
@@ -122,26 +126,33 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             todo_title += '<span title="Done!">[x]</span>'
             todotxt_line += "x"
         else:
-            todo_title += '<span title="Opne">[ ]</span>'
+            todo_title += '<span title="Open">[ ]</span>'
 
-        if new_article_metadata["priority"]:
+
+        if "priority" in new_article_metadata:
             todotxt_line += " (" + new_article_metadata["priority"].upper()[:1] + ")"
 
-        if new_article_metadata["completed"] and new_article_metadata["date"]:
-            todotxt_line += " " + new_article_metadata["completed"].format("YYYY-MM-DD")
+        if "completed" in new_article_metadata and new_article_metadata["completed"] and new_article_metadata["date"]:
+            todotxt_line += " " + new_article_metadata["completed"].strftime("%Y-%m-%d")
 
         if new_article_metadata["date"]:
-            todotxt_line += " " + new_article_metadata["date"].format("YYYY-MM-DD")
+            todotxt_line += " " + new_article_metadata["date"].strftime("%Y-%m-%d")
 
         todo_title += " " + new_article_metadata["title"]
         todotxt_line += " " + new_article_metadata["title"]
 
-        todo_title += " ".join(["#"+x for x in new_article_metadata["tags"]])
-        todotxt_line += " ".join(["+"+x for x in new_article_metadata["tags"]])
+        todo_title += " ".join(["#"+tag.name for tag in new_article_metadata["tags"]])
+        todotxt_line += " ".join(["+"+tag.name for tag in new_article_metadata["tags"]])
 
-        todotxt_line += " ".join(["@"+x for x in new_article_metadata["contexts"]])
+        if "contexts" in new_article_metadata:
+            if isinstance(new_article_metadata["contexts"], list):
+                todotxt_line += " ".join(["@"+x for x in new_article_metadata["contexts"]])
+            elif isinstance(new_article_metadata["contexts"], str):
+                todotxt_line += " @" + new_article_metadata["contexts"]
 
-        if new_article_metadata["priority"].lower() in ["a"]:
+        if "priority" not in new_article_metadata:
+            pass
+        elif new_article_metadata["priority"].lower() in ["a"]:
             todo_title += ' <span title="Highest Priority">🔺</span>'
         elif new_article_metadata["priority"].lower() in ["b", "high"]:
             todo_title += ' <span title="High Priority">⏫</span>'
@@ -152,35 +163,35 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         elif new_article_metadata["priority"].lower() in ["z", "someday"]:
             todo_title += ' <span title="Lowest Priority">⏬️</span>'
 
-        if new_article_metadata["recurrance"]:
+        if "recurrance" in new_article_metadata:
             todo_title += '<span title="Recurrance">🔁</span>' + new_article_metadata["recurrance"]
             todotxt_line += " rrule:" + new_article_metadata["recurrance"]
 
         if new_article_metadata["date"]:
-            todo_title += '<span title="Created Date">➕</span>' + new_article_metadata["date"].format("YYYY-MM-DD")
+            todo_title += '<span title="Created Date">➕</span>' + new_article_metadata["date"].strftime("%Y-%m-%d")
         
-        if new_article_metadata["threshold"]:
-            todo_title += '<span title="Threshold (Start) Date">🛫</span>' + new_article_metadata["threshold"].format("YYYY-MM-DD")
-            todotxt_line += " t:" + new_article_metadata["threshold"].format("YYYY-MM-DD")
+        if "threshold" in new_article_metadata:
+            todo_title += '<span title="Threshold (Start) Date">🛫</span>' + new_article_metadata["threshold"].strftime("%Y-%m-%d")
+            todotxt_line += " t:" + new_article_metadata["threshold"].strftime("%Y-%m-%d")
 
-        if new_article_metadata["scheduled"]:
-            todo_title += '<span title="Scheduled Date">⏳</span>' + new_article_metadata["scheduled"].format("YYYY-MM-DD")
+        if "scheduled" in new_article_metadata:
+            todo_title += '<span title="Scheduled Date">⏳</span>' + new_article_metadata["scheduled"].strftime("%Y-%m-%d")
 
-        if new_article_metadata["due"]:
-            todo_title += '<span title="Due Date">📅</span>' + new_article_metadata["due"].format("YYYY-MM-DD")
-            todotxt_line += " due:" + new_article_metadata["due"].format("YYYY-MM-DD")
+        if "due" in new_article_metadata:
+            todo_title += '<span title="Due Date">📅</span>' + new_article_metadata["due"].strftime("%Y-%m-%d")
+            todotxt_line += " due:" + new_article_metadata["due"].strftime("%Y-%m-%d")
 
-        if new_article_metadata["cancelled"]:
-            todo_title += '<span title="Date Cancelled">❌</span>' + new_article_metadata["cancelled"].format("YYYY-MM-DD")
+        if "cancelled" in new_article_metadata:
+            todo_title += '<span title="Date Cancelled">❌</span>' + new_article_metadata["cancelled"].strftime("%Y-%m-%d")
 
-        if new_article_metadata["completed"]:
-            todo_title += '<span title="Date Completed">✅</span>' + new_article_metadata["completed"].format("YYYY-MM-DD")
+        if "completed" in new_article_metadata:
+            todo_title += '<span title="Date Completed">✅</span>' + new_article_metadata["completed"].strftime("%Y-%m-%d")
 
-        if new_article_metadata["task_id"]:
+        if "task_id" in new_article_metadata:
             todo_title += '<span title="Task ID">🆔</span>' + new_article_metadata["task_id"]
             todotxt_line += " id:" + new_article_metadata["task_id"]
 
-        if new_article_metadata["depends_on"]:
+        if "depends_on" in new_article_metadata:
             todo_title += '<span title="Depends On">⛔</span>' + ",".join(new_article_metadata["depends_on"])
             todotxt_line += " depends_on:" + ",".join(new_article_metadata["depends_on"])
 
