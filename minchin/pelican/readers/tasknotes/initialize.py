@@ -1,6 +1,7 @@
 import logging
 
 from .constants import LOG_PREFIX, __url__, __version__
+from minchin.pelican.readers.commonmark.reader import clean_dates
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,16 @@ def check_settings(pelican):
         '%s ARTICLE_EXCLUDES updated to "%s"'
         % (LOG_PREFIX, pelican.settings["ARTICLE_EXCLUDES"])
     )
+
+    # # add custom date cleaner
+    # # TODO: confirm these are loaded by the CommonMark reader...
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["threshold"] = clean_dates
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["threshold_date"] = clean_dates
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["scheduled"] = clean_dates
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["due"] = clean_dates
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["cancelled"] = clean_dates
+    # pelican.settings["METADATA_PROCESSORS_MDIT"]["completed"] = clean_dates
+
 
 
 def tasknotes_version(pelican):
