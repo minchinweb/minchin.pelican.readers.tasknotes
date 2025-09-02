@@ -73,10 +73,7 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             # micropost metadata, we don't need to force one
             pass
 
-        new_article_metadata["title"] = myBaseReader.process_metadata(
-            "title", post_slug
-        )
-
+        new_article_metadata["title"] = metadata["title"]
         new_article_metadata["date"] = metadata["date"]
         new_article_metadata["slug"] = post_slug
         new_article_metadata["save_as"] = myBaseReader.process_metadata(
@@ -115,8 +112,10 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # this is the todo item, as would be read in the todo.txt format
         todotxt_line = ""
 
+        # TODO: Replace with checkboxes from FancyLists plugin
         if "status" not in new_article_metadata:
-            pass
+            todo_title += '<span title="Open">[ ]</span>'
+            # pass
         elif new_article_metadata["status"].lower() in ["in-progress", "in progress"]:
             todo_title += '<span title="In Progress">[/]</span>'
         elif new_article_metadata["status"].lower() in ["cancelled", ]:
@@ -141,8 +140,8 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         todo_title += " " + new_article_metadata["title"]
         todotxt_line += " " + new_article_metadata["title"]
 
-        todo_title += " ".join(["#"+tag.name for tag in new_article_metadata["tags"]])
-        todotxt_line += " ".join(["+"+tag.name for tag in new_article_metadata["tags"]])
+        todo_title += " " + " ".join(["#"+tag.name for tag in new_article_metadata["tags"]])
+        todotxt_line += " " + " ".join(["+"+tag.name for tag in new_article_metadata["tags"]])
 
         if "contexts" in new_article_metadata:
             if isinstance(new_article_metadata["contexts"], list):

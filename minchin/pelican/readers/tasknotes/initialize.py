@@ -36,7 +36,7 @@ def check_settings(pelican):
         )
 
     if "TASKNOTES_SLUG" not in pelican.settings.keys():
-        pelican.settings["TASKNOTES_SLUG"] = "u{date:%Y%m%d%H%M}"
+        pelican.settings["TASKNOTES_SLUG"] = "task-{date:%Y%m%d%H%M}"
         logger.debug(
             '%s TASKNOTES_SLUG set to "%s"'
             % (LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"])
