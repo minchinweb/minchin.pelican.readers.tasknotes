@@ -92,14 +92,6 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             # new_article_metadata["tags"] = myBaseReader.process_metadata("tags", metadata["tags"])
             new_article_metadata["tags"] = metadata["tags"]
 
-            if settings.get("TASKNOTES_APPEND_HASHTAGS", True):
-                # metadata["tags"] is already a list of `pelican.urlwrappers.Tag`
-                for tag in metadata["tags"]:
-                    tag_url = settings["SITEURL"] + "/" + tag.url
-                    tag_link = f'<a href="{tag_url}" class="tasknotes-post-tag">#{tag.name}</a>'
-
-                    content = content.removesuffix("</p>") + " " + tag_link + "</p>"
-
         if "task_status" in metadata.keys():
             new_article_metadata["status"] = metadata["task_status"]
         elif "status" in metadata.keys():
@@ -159,7 +151,7 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             _data_task = "/"
         elif new_article_metadata["status"].lower() in ["cancelled", ]:
             _data_task = "-"
-            todotxt_line += "-"
+            todotxt_line += "-"  # TODO: is this the right way to show this??
         elif new_article_metadata["status"].lower() in ["done", ]:
             _data_task = "x"
             todotxt_line += "x "
@@ -167,12 +159,16 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             # _data_task = " "
             pass
 
-        todo_title += '<input class="task-list-item-checkbox" '
-        todo_title += 'disabled="disabled" type="checkbox" data-task="'
-        todo_title += _data_task
-        todo_title += '" /><span data-task="'
-        todo_title += _data_task
-        todo_title += '"></span>'
+        _todo_checkbox = ""
+        _todo_checkbox += '<input class="task-list-item-checkbox" '
+        _todo_checkbox += 'disabled="disabled" type="checkbox" data-task="'
+        _todo_checkbox += _data_task
+        _todo_checkbox += '" /><span data-task="'
+        _todo_checkbox += _data_task
+        _todo_checkbox += '"></span>'
+
+        new_article_metadata["tasknote_checkbox"] = _todo_checkbox
+        todo_title += _todo_checkbox
 
         # priorities are removed from completed items, so they sort to the bottom
         if "priority" in new_article_metadata and "completed" not in new_article_metadata:
@@ -198,7 +194,12 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
                 todo_title += " +" + new_article_metadata["projects"]
                 todotxt_line += new_article_metadata["projects"] + " "
 
-        todo_title += " " + " ".join(["#"+tag.name for tag in new_article_metadata["tags"]])
+        if "tags" in metadata.keys():
+            # metadata["tags"] is already a list of `pelican.urlwrappers.Tag`
+            for tag in metadata["tags"]:
+                tag_url = settings["SITEURL"] + "/" + tag.url
+                tag_link = f'<a href="{tag_url}" class="tasknotes-tag">#{tag.name}</a>'
+                todo_title += " " + tag_link
         todotxt_line += " ".join(["#"+tag.name for tag in new_article_metadata["tags"]]) + " "
 
         if "contexts" in new_article_metadata:
@@ -227,24 +228,28 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             todotxt_line += "rrule:" + new_article_metadata["recurrance"] + " "
 
         if new_article_metadata["date"]:
-            todo_title += ' <span title="Created Date">➕</span>' + new_article_metadata["date"].strftime("%Y-%m-%d")
+            todo_title += ' <span title="Created Date">➕</span><time datetime="' + new_article_metadata["date"].isoformat() + '">' + new_article_metadata["date"].strftime("%Y-%m-%d") + '</time>'
         
         if "threshold" in new_article_metadata:
-            todo_title += ' <span title="Threshold (Start) Date">🛫</span>' + new_article_metadata["threshold"].strftime("%Y-%m-%d")
+            todo_title += ' <span title="Threshold (Start) Date">🛫</span><time datetime="' + new_article_metadata["threshold"].isoformat() + '">' + new_article_metadata["threshold"].strftime("%Y-%m-%d") + '</time>'
             todotxt_line += "t:" + new_article_metadata["threshold"].strftime("%Y-%m-%d") + " "
 
         if "scheduled" in new_article_metadata:
-            todo_title += ' <span title="Scheduled Date">⏳</span>' + new_article_metadata["scheduled"].strftime("%Y-%m-%d")
+            todo_title += ' <span title="Scheduled Date">⏳</span><time datetime="' + new_article_metadata["scheduled"].isoformat() + '">' + new_article_metadata["scheduled"].strftime("%Y-%m-%d") + '</time>'
 
         if "due" in new_article_metadata:
-            todo_title += ' <span title="Due Date">📅</span>' + new_article_metadata["due"].strftime("%Y-%m-%d")
+            todo_title += ' <span title="Due Date">📅</span><time datetime="' + new_article_metadata["due"].isoformat() + '">' + new_article_metadata["due"].strftime("%Y-%m-%d") + '</time>'
             todotxt_line += "due:" + new_article_metadata["due"].strftime("%Y-%m-%d") + " "
 
-        if "cancelled" in new_article_metadata:
-            todo_title += ' <span title="Date Cancelled">❌</span>' + new_article_metadata["cancelled"].strftime("%Y-%m-%d")
-
-        if "completed" in new_article_metadata:
-            todo_title += ' <span title="Date Completed">✅</span>' + new_article_metadata["completed"].strftime("%Y-%m-%d")
+        # Cancelled tasks don't have a "cancelled date", but are given a
+        # `(task_)status` of "`cancelled` and marked `completed` on the date
+        # they are cancelled.
+        if "status" in new_article_metadata and new_article_metadata["status"].lower() == "cancelled" and "completed" in new_article_metadata:
+            todo_title += ' <span title="Date Cancelled">❌</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
+        # Tasks are assumed to be be both "Completed" (successfully) and
+        # "Cancelled"
+        elif "completed" in new_article_metadata:
+            todo_title += ' <span title="Date Completed">✅</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
 
         if "task_id" in new_article_metadata:
             todo_title += ' <span title="Task ID">🆔</span>' + new_article_metadata["task_id"]
@@ -253,7 +258,8 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # TODO: render these as links to the other todo items
         if "depends_on" in new_article_metadata:
             todo_title += ' <span title="Depends On">⛔</span>' + ",".join(new_article_metadata["depends_on"])
-            todotxt_line += "depends_on:" + ",".join(new_article_metadata["depends_on"]) + " "
+            # 'p:' for "parent"
+            todotxt_line += "p:" + ",".join(new_article_metadata["depends_on"]) + " "
 
         # move trailing space, if any
         todotxt_line = todotxt_line.rstrip()

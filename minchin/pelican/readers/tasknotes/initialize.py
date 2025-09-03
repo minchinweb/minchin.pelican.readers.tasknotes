@@ -82,6 +82,9 @@ def check_settings(pelican):
 def tasknotes_version(pelican):
     """
     Insert tasknotes version into Pelican context.
+
+    These are indented to be used by the Pelican theme to provide plugin
+    details and to link back to the plugin.
     """
 
     if "TASKNOTES_VERSION" not in pelican.settings.keys():
