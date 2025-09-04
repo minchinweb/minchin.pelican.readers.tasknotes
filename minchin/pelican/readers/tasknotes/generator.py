@@ -50,7 +50,7 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # content, metadata = myMarkdownReader.read(source_path=post)
         content, metadata = myMarkdownReader.read(filename=post)
 
-        logger.debug(f"{LOG_PREFIX} {metadata}")
+        logger.log(5, f"{LOG_PREFIX} {metadata}")
 
         new_article_metadata = {
             "category": myBaseReader.process_metadata(
@@ -93,42 +93,51 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
             new_article_metadata["tags"] = metadata["tags"]
 
         if "task_status" in metadata.keys():
-            new_article_metadata["status"] = metadata["task_status"]
+            new_article_metadata["task_status"] = metadata["task_status"]
         elif "status" in metadata.keys():
-            new_article_metadata["status"] = metadata["status"]
-
-        if "priority" in metadata.keys():
-            new_article_metadata["priority"] = metadata["priority"]
-        if "completed" in metadata.keys():
-            new_article_metadata["completed"] = metadata["completed"]
-        # TODO: This should be a list
-        if "contexts" in metadata.keys():
-            new_article_metadata["contexts"] = metadata["contexts"]
-        # TODO: This should be a list
-        if "projects" in metadata.keys():
-            new_article_metadata["projects"] = metadata["projects"]
-        if "recurrance" in metadata.keys():
-            new_article_metadata["recurrance"] = metadata["recurrance"]
+            new_article_metadata["task_status"] = metadata["task_status"]
 
         if "threshold_date" in metadata.keys():
             new_article_metadata["threshold"] = metadata["threshold_date"]
         elif "threshold" in metadata.keys():
             new_article_metadata["threshold"] = metadata["threshold"]
-            
-        if "scheduled" in metadata.keys():
-            new_article_metadata["scheduled"] = metadata["scheduled"]
-        if "due" in metadata.keys():
-            new_article_metadata["due"] = metadata["due"]
-        if "cancelled" in metadata.keys():
-            new_article_metadata["cancelled"] = metadata["cancelled"]
-        if "completed" in metadata.keys():
-            new_article_metadata["completed"] = metadata["completed"]
-        # TODO: derive this from the timename??
-        if "task_id" in metadata.keys():
-            new_article_metadata["task_id"] = metadata["task_id"]
-        # TODO: this should be a list
-        if "depends_on" in metadata.keys():
-            new_article_metadata["depends_on"] = metadata["depends_on"]
+
+        # metadata keys that go straight across do not need to be listed
+        # if "priority" in metadata.keys():
+        #     new_article_metadata["priority"] = metadata["priority"]
+        # if "completed" in metadata.keys():
+        #     new_article_metadata["completed"] = metadata["completed"]
+        # # TODO: This should be a list
+        # if "contexts" in metadata.keys():
+        #     new_article_metadata["contexts"] = metadata["contexts"]
+        # # TODO: This should be a list
+        # if "projects" in metadata.keys():
+        #     new_article_metadata["projects"] = metadata["projects"]
+        # if "recurrance" in metadata.keys():
+        #     new_article_metadata["recurrance"] = metadata["recurrance"]
+        # if "scheduled" in metadata.keys():
+        #     new_article_metadata["scheduled"] = metadata["scheduled"]
+        # if "due" in metadata.keys():
+        #     new_article_metadata["due"] = metadata["due"]
+        # if "cancelled" in metadata.keys():
+        #     new_article_metadata["cancelled"] = metadata["cancelled"]
+        # if "completed" in metadata.keys():
+        #     new_article_metadata["completed"] = metadata["completed"]
+        # # TODO: derive this from the timename??
+        # if "task_id" in metadata.keys():
+        #     new_article_metadata["task_id"] = metadata["task_id"]
+        # # TODO: this should be a list
+        # if "depends_on" in metadata.keys():
+        #     new_article_metadata["depends_on"] = metadata["depends_on"]
+
+
+        # NOTE:
+        # new_article_metadata is set by pelicanconf.py
+        # metadata is set from the tasknote and is given higher precedence
+        # here.
+        # Do this before we start trying to read from the metadata to fill out
+        # the `todo_title` line
+        new_article_metadata.update(metadata)
 
 
         # Assemble Tasks-style line
@@ -145,14 +154,14 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         _data_task = " "
         # These checkboxes match the formatting from my Fancy-Checkboxes plugin
         # for Markdown-IT. They will need to be styled by the theme in use.
-        if "status" not in new_article_metadata:
+        if "task_status" not in new_article_metadata:
             pass
-        elif new_article_metadata["status"].lower() in ["in-progress", "in progress"]:
+        elif new_article_metadata["task_status"].lower() in ["in-progress", "in progress"]:
             _data_task = "/"
-        elif new_article_metadata["status"].lower() in ["cancelled", ]:
+        elif new_article_metadata["task_status"].lower() in ["cancelled", ]:
             _data_task = "-"
-            todotxt_line += "-"  # TODO: is this the right way to show this??
-        elif new_article_metadata["status"].lower() in ["done", ]:
+            todotxt_line += "- "  # TODO: is this the right way to show this??
+        elif new_article_metadata["task_status"].lower() in ["done", ]:
             _data_task = "x"
             todotxt_line += "x "
         else:
@@ -223,9 +232,9 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         elif new_article_metadata["priority"].lower() in ["z", "someday"]:
             todo_title += ' <span title="Lowest Priority">⏬️</span>'
 
-        if "recurrance" in new_article_metadata:
-            todo_title += ' <span title="Recurrance">🔁</span>' + new_article_metadata["recurrance"]
-            todotxt_line += "rrule:" + new_article_metadata["recurrance"] + " "
+        if "recurrence" in new_article_metadata:
+            todo_title += ' <span title="Recurrence">🔁</span>' + new_article_metadata["recurrence"]
+            todotxt_line += "rrule:" + new_article_metadata["recurrence"] + " "
 
         if new_article_metadata["date"]:
             todo_title += ' <span title="Created Date">➕</span><time datetime="' + new_article_metadata["date"].isoformat() + '">' + new_article_metadata["date"].strftime("%Y-%m-%d") + '</time>'
@@ -244,7 +253,7 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # Cancelled tasks don't have a "cancelled date", but are given a
         # `(task_)status` of "`cancelled` and marked `completed` on the date
         # they are cancelled.
-        if "status" in new_article_metadata and new_article_metadata["status"].lower() == "cancelled" and "completed" in new_article_metadata:
+        if "status" in new_article_metadata and new_article_metadata["task_status"].lower() == "cancelled" and "completed" in new_article_metadata:
             todo_title += ' <span title="Date Cancelled">❌</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
         # Tasks are assumed to be be both "Completed" (successfully) and
         # "Cancelled"
@@ -266,16 +275,18 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
 
         new_article_metadata["summary"] = todo_title
 
-
-        # NOTE:
-        # new_article_metadata is set by pelicanconf.py
-        # metadata is set from the tasknote and is given higher precedence below.
-        new_article_metadata.update(metadata)
-
         new_article = Article(
-            content,
+            content or "",
             new_article_metadata,
         )
+
+        # `source_path` is needed as an attribute, rather than part of the
+        # metadata
+        new_article.source_path = metadata["source_path"]
+
+        # these should be run by the generator, rather than here
+        articleGenerator.add_source_path(new_article)
+        articleGenerator.add_static_links(new_article)
 
         articleGenerator.articles.insert(0, new_article)
         logger.debug(f"{LOG_PREFIX} {todotxt_line}")

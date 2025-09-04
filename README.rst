@@ -230,6 +230,9 @@ based on different usecases are welcomed!
 Known Issues
 ------------
 
-- Processing relies on Pelican's built-in Markdown reader.
+- Processing relies on CommonMark (Markdown) reader, which means you probably
+  have to use it for the rest of your site as well.
+- Default slug processing means that you can't have two tasks created the same
+  minutes (or Pelican will break).
 
 .. Credits
