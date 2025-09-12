@@ -25,11 +25,11 @@ _tasknote_count = 0
 _todotxt_lines = []
 
 
-def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
+def addTaskNoteArticles(self: ArticlesGenerator) -> None:
     global _tasknote_count
     global _todotxt_lines
 
-    settings = articleGenerator.settings
+    settings = self.settings
 
     # Author, category, and tags are objects, not strings, so they need to
     # be handled using myBaseReader's process_metadata() function.
@@ -42,13 +42,19 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
         # "txt",
     ] + myMarkdownReader.file_extensions
 
-    for post in articleGenerator.get_files(
-        paths=settings["TASKNOTES_FOLDER"], extensions=file_extensions
+    for post_filename in self.get_files(
+        paths=settings["TASKNOTES_FOLDER"],
+        extensions=file_extensions,
+        # exclude=settings["TASKNOTES_EXCLUDES"]
     ):
-        post = settings["PATH"] + os.sep + post
+        post_full_filename = settings["PATH"] + os.sep + post_filename
+
+        # # TODO: Check for cached version
+        # article = articleGenerator.get_cached_data(post, None)
+        # if article is None:
 
         # content, metadata = myMarkdownReader.read(source_path=post)
-        content, metadata = myMarkdownReader.read(filename=post)
+        content, metadata = myMarkdownReader.read(filename=post_full_filename)
 
         logger.log(5, f"{LOG_PREFIX} {metadata}")
 
@@ -282,21 +288,25 @@ def addTaskNoteArticles(articleGenerator: ArticlesGenerator) -> None:
 
         # `source_path` is needed as an attribute, rather than part of the
         # metadata
-        new_article.source_path = metadata["source_path"]
+        new_article.source_path = metadata["source_path"] = post_filename
+
+        # # Cache generated file
+        # articleGenerator.cache_data(f, article)
 
         # these should be run by the generator, rather than here
-        articleGenerator.add_source_path(new_article)
-        articleGenerator.add_static_links(new_article)
+        # to solve issue of Jinja breaking due to KeyError "generated_content"
+        self.add_source_path(new_article)
+        self.add_static_links(new_article)
 
-        articleGenerator.articles.insert(0, new_article)
+        self.articles.insert(0, new_article)
         logger.debug(f"{LOG_PREFIX} {todotxt_line}")
         _todotxt_lines.append(todotxt_line)
         _tasknote_count += 1
 
     # apply sorting
     logger.debug(f'{LOG_PREFIX} sorting order: "{settings.get("ARTICLE_ORDER_BY", "reversed-date")}"')
-    articleGenerator.articles = order_content(
-        articleGenerator.articles, settings.get("ARTICLE_ORDER_BY", "reversed-date")
+    self.articles = order_content(
+        self.articles, settings.get("ARTICLE_ORDER_BY", "reversed-date")
     )
 
 
