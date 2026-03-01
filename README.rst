@@ -27,7 +27,8 @@ Pelican Tasknotes Reader
 Quickstart
 ----------
 
-1. Install the plugin via pip: ``pip install minchin.pelican.readers.tasknotes``
+1. Install the plugin via pip: ``pip install
+   minchin.pelican.readers.tasknotes``
 2. Generally, the plugin should be loaded and configured automatically without
    further effort on your part.
 3. Create a ``tasks`` folder in your content folder (to hold your tasknotes!).
@@ -44,44 +45,25 @@ Sample (Tasknote) "Post" File
 
 .. code-block:: md
 
-   <!-- ./content/micro/202307091701.md -->
+   <!-- ./content/tasks/task-202509011519.md -->
 
-   date: 2023-07-09 17:01
+   ---
+   tasknote: true
+   date: 2025-09-01T15:19:17.427-06:00
+   modified: 2025-09-01T15:19:17.427-06:00
+   category: tasks
+   title: Create a Plugin for Tasknotes
+   task_status: open
+   priority: normal
+   projects:
+     - "[[pelican]]"
+   tags:
+     - task
+     - test
+   ---
 
-   I'm microblogging with Pelican!
-   https://blog.minchin.ca/label/microblogging-pelican
+Also, you can put Markdown, including *italics* and **bold** as a body!
 
-Or a post with an image:
-
-.. code-block:: md
-
-   <!-- ./content/micro/202307112138.md -->
-
-   date: 2023-07-11 21:38
-   image: images/birger-strahl-olI66vtMgNo-unsplash.jpg
-
-   Microblog posts can have "feature" images too! (URL of photo should
-   automatically be added.)
-
-The image path is relative to your ``content`` folder. A URL of the photo is
-added to the end of the post as well.
-
-Or with tags (or hashtags):
-
-.. code-block:: md
-
-   <!-- ./content/micro/202307131456.md -->
-
-   date: 2023-07-13 14:56
-   tags: Python, Pelican, Microblogging
-
-   I'm now Microblogging with Pelican!
-
-
-This will add links at the end of your post to the tags to the tag page for
-your (Pelican) site.
-
-For now, it does not pull tags out of the body of your post.
 
 Background Notes
 ----------------
@@ -174,12 +156,28 @@ TASKNOTES_APPEND_HASHTAGS = True
    Tags gets appended at the end of the tasknote "summary line" as hashtags.
    *#taggedyou*  Tags have the CSS class ``.tasknotes-post-tag`` applied, if
    you want to conditionally control their display or formatting.
+TASKNOTES_CANCELLED_STATUS = ["cancelled", "canceled", "50-cancelled"]
+   Status that are considered "in progress". c.f.
+   ``TASKNOTES_IN_PROGRESS_STATUS``, ``TASKNOTES_DUPLICATE_STATUS``, and
+   ``TASKNOTES_DONE_STATUS``.
 TASKNOTES_CATEGORY = "tasks"
    Default category for your tasknotes. It could be overwritten by the
    metadata on top of individual posts.
+TASKNOTES_DONE_STATUS = ["done", "30-done"]
+   Status that are considered "in progress". c.f.
+   ``TASKNOTES_IN_PROGRESS_STATUS``, ``TASKNOTES_IN_CANCELLED_STATUS``, and
+   ``TASKNOTES_DUPLICATE_STATUS``.
+TASKNOTES_DUPLICATE_STATUS = ["duplicate", "60-duplicate"]
+   Status that are considered "in progress". c.f.
+   ``TASKNOTES_IN_PROGRESS_STATUS``, ``TASKNOTES_IN_CANCELLED_STATUS``, and
+   ``TASKNOTES_DONE_STATUS``.
 TASKNOTES_FOLDER = "tasks"
    Folder containing your tasknotes, relative to your content root
    folder.
+TASKNOTES_IN_PROGRESS_STATUS = ["in-progress", "in progress", "20-in-progress"]
+   Status that are considered "in progress". c.f.
+   ``TASKNOTES_IN_CANCELLED_STATUS``, ``TASKNOTES_DUPLICATE_STATUS``, and
+   ``TASKNOTES_DONE_STATUS``.
 TASKNOTES_SAVE_AS = ARTICLE_SAVE_AS
    What to save the tasknote output file as. Defaults to using the same file
    structure as you are using for articles (aka "regular" posts). c.f.
@@ -192,6 +190,7 @@ TASKNOTES_URL = ARTICLE_URL
    What URL to post the tasknote to. Defaults to using the same URL structure
    as you are using for articles (aka "regular" posts). c.f.
    ``TASKNOTES_SAVE_AS``.
+
 
 Integration with Themes
 -----------------------

@@ -1,6 +1,6 @@
 # metadata
 __title__ = "minchin.pelican.readers.tasknotes"
-__version__ = "1.0.0-dev.2"
+__version__ = "0.1.0-dev.0"
 __description__ = "Tasknotes for Pelican"
 __author__ = "W. Minchin"
 __email__ = "w_minchin@hotmail.com"
@@ -11,3 +11,22 @@ __license__ = "MIT License"
 LOG_PREFIX = "[TaskNotes]"
 
 DEFAULT_TASKNOTES_CATEGORY = "tasks"
+
+DEFAULT_IN_PROGRESS_STATUS = [
+    "in-progress",
+    "in progress",
+    "20-in-progress",
+]
+DEFAULT_CANCELLED_STATUS = [
+    "cancelled",
+    "canceled",
+    "50-cancelled",
+]
+DEFAULT_DUPLICATE_STATUS = [
+    "duplicate",
+    "60-duplicate",
+]
+DEFAULT_DONE_STATUS = [
+    "done",
+    "30-done",
+]

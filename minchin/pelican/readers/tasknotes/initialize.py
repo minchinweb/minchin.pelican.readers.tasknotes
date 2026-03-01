@@ -2,7 +2,15 @@ import logging
 
 from minchin.pelican.readers.commonmark.reader import clean_dates
 
-from .constants import LOG_PREFIX, __url__, __version__
+from .constants import (
+    DEFAULT_CANCELLED_STATUS,
+    DEFAULT_DONE_STATUS,
+    DEFAULT_DUPLICATE_STATUS,
+    DEFAULT_IN_PROGRESS_STATUS,
+    LOG_PREFIX,
+    __url__,
+    __version__,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +75,54 @@ def check_settings(pelican):
             '%s TASKNOTES_URL previously set manually. Is "%s"',
             LOG_PREFIX,
             pelican.settings["TASKNOTES_URL"],
+        )
+
+    if "TASKNOTES_IN_PROGRESS_STATUS" not in pelican.settings.keys():
+        pelican.settings["TASKNOTES_IN_PROGRESS_STATUS"] = DEFAULT_IN_PROGRESS_STATUS
+        logger.debug(
+            "%s TASKNOTES_IN_PROGRESS_STATUS set to default",
+            LOG_PREFIX,
+        )
+    else:
+        logger.debug(
+            "%s TASKNOTES_IN_PROGRESS_STATUS previously set manually.",
+            LOG_PREFIX,
+        )
+
+    if "TASKNOTES_CANCELLED_STATUS" not in pelican.settings.keys():
+        pelican.settings["TASKNOTES_CANCELLED_STATUS"] = DEFAULT_CANCELLED_STATUS
+        logger.debug(
+            "%s TASKNOTES_CANCELLED_STATUS set to default",
+            LOG_PREFIX,
+        )
+    else:
+        logger.debug(
+            "%s TASKNOTES_CANCELLED_STATUS previously set manually.",
+            LOG_PREFIX,
+        )
+
+    if "TASKNOTES_DUPLICATE_STATUS" not in pelican.settings.keys():
+        pelican.settings["TASKNOTES_DUPLICATE_STATUS"] = DEFAULT_DUPLICATE_STATUS
+        logger.debug(
+            "%s TASKNOTES_DUPLICATE_STATUS set to default",
+            LOG_PREFIX,
+        )
+    else:
+        logger.debug(
+            "%s TASKNOTES_DUPLICATE_STATUS previously set manually.",
+            LOG_PREFIX,
+        )
+
+    if "TASKNOTES_DONE_STATUS" not in pelican.settings.keys():
+        pelican.settings["TASKNOTES_DONE_STATUS"] = DEFAULT_DONE_STATUS
+        logger.debug(
+            "%s TASKNOTES_DONE_STATUS set to default",
+            LOG_PREFIX,
+        )
+    else:
+        logger.debug(
+            "%s TASKNOTES_DONE_STATUS previously set manually.",
+            LOG_PREFIX,
         )
 
     pelican.settings["ARTICLE_EXCLUDES"] += [

@@ -160,26 +160,27 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # TODO: allow these lists to be plugin settings
         if "task_status" not in new_article_metadata:
             pass
-        elif new_article_metadata["task_status"].lower() in [
-            "in-progress",
-            "in progress",
-            "20-in-progress",
-        ]:
+        elif (
+            new_article_metadata["task_status"].lower()
+            in settings["TASKNOTES_IN_PROGRESS_STATUS"]
+        ):
             _data_task = "/"
-        elif new_article_metadata["task_status"].lower() in [
-            "cancelled",
-            "canceled",
-            "50-cancelled",
-        ]:
+        elif (
+            new_article_metadata["task_status"].lower()
+            in settings["TASKNOTES_CANCELLED_STATUS"]
+        ):
             _data_task = "-"
             todotxt_line += "- "  # TODO: is this the right way to show this??
-        elif new_article_metadata["task_status"].lower() in ["done", "30-done"]:
+        elif (
+            new_article_metadata["task_status"].lower()
+            in settings["TASKNOTES_DONE_STATUS"]
+        ):
             _data_task = "x"
             todotxt_line += "x "
-        elif new_article_metadata["task_status"].lower() in [
-            "duplicate",
-            "60-duplicate",
-        ]:
+        elif (
+            new_article_metadata["task_status"].lower()
+            in settings["TASKNOTES_DUPLICATE_STATUS"]
+        ):
             _data_task = "-"
             todotxt_line += "- "
         else:
@@ -331,8 +332,12 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # TODO: separate cancelled and duplicated tasks
         if (
             "task_status" in new_article_metadata
-            and new_article_metadata["task_status"].lower()
-            in ["cancelled", "canceled", "50-cancelled", "duplicate", "60-duplicate"]
+            and (
+                new_article_metadata["task_status"].lower()
+                in settings["TASKNOTES_CANCELLED_STATUS"]
+                or new_article_metadata["task_status"].lower()
+                in settings["TASKNOTES_DUPLICATE_STATUS"]
+            )
             and "completed" in new_article_metadata
         ):
             todo_title += (
