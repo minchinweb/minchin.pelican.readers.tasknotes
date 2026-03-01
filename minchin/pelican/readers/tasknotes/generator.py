@@ -284,6 +284,8 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         new_article = Article(
             content or "",
             new_article_metadata,
+            settings=self.settings,
+            context=self.context,
         )
 
         # `source_path` is needed as an attribute, rather than part of the
