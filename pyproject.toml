@@ -1,6 +1,63 @@
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel"]
+requires = ["setuptools >= 77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["minchin*"]
+exclude = ["tests"]
+
+[tool.setuptools.dynamic]
+# this has to be the place the version is located via static analysis
+version = {attr = "minchin.pelican.readers.tasknotes.constants.__version__"}
+# description = {attr = "minchin.jrnl.__description__"}  # must be pulled from file
+readme = {file = ["README.rst"], content-type = "text/x-rst"}
+dependencies = {file = [".requirements/base.in"]}
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = {file = [".requirements/dev.in"] }
+test = {file = [".requirements/test.in"] }
+# release = {file = [".requirements/release.in"] }
+# docs = {file = [".requirements/docs.in"] }
+
+[project]
+name = "minchin.pelican.readers.tasknotes"
+description = "Tasknotes for Pelican"
+dynamic = [
+    "version",
+    # "description",
+    "readme",
+    "dependencies",
+    "optional-dependencies",
+]
+authors = [
+    {name = "William Minchin", email="w_minchin@hotmail.com" },
+]
+maintainers = [
+    {name = "William Minchin", email="w_minchin@hotmail.com" },
+]
+# requires-python = ">=3.6"
+keywords = ["pelican", "plugin", "tasknotes", "to dos", "todo", "to-dos", "to-do"]
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Plugins",
+    "Framework :: Pelican",
+    "Framework :: Pelican :: Plugins",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+# "Homepage" =
+"Bug Tracker" = "https://github.com/minchinweb/minchin.pelican.readers.tasknotes/issues"
+# Documentation = 
+Repository = "https://github.com/minchinweb/minchin.pelican.readers.tasknotes"
+Changelog = "https://github.com/minchinweb/minchin.pelican.readers.tasknotes/blob/master/CHANGELOG.rst"
+# "Release Notes"
+
 
 [tool.isort]
 # Maintain compatibility with Black
@@ -11,5 +68,19 @@ force_sort_within_sections = true
 
 # Designate "pelican" as separate import section
 known_pelican = "pelican"
-known_first_party = "minchin"
+known_first_party = ["minchin"]
 sections = "FUTURE,STDLIB,THIRDPARTY,PELICAN,FIRSTPARTY,LOCALFOLDER"
+
+skip_gitignore = true
+
+[tool.black]
+line-length = 88
+
+[tool.flake8]
+# requires flake8-pyproject to read this
+ignore = [
+    "E203",  # conflicts with `black`
+    "W503",  # "line break before binary operator", conflicts with `black`
+]
+max-line-length = 88
+count = true

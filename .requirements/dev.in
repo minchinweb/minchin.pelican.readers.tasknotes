@@ -1,0 +1,5 @@
+invoke
+black
+isort
+minchin.releaser >= 0.8.2
+setuptools
