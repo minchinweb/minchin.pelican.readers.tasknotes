@@ -56,8 +56,6 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # content, metadata = myMarkdownReader.read(source_path=post)
         content, metadata = myMarkdownReader.read(post_full_filename)
 
-        logger.log(5, f"{LOG_PREFIX} {metadata}")
-
         new_article_metadata = {
             "category": myBaseReader.process_metadata(
                 "category",
@@ -76,7 +74,7 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
             )
         except KeyError:
             # if author isn't set by either the general settings or the
-            # micropost metadata, we don't need to force one
+            # TaskNote metadata, we don't need to force one
             pass
 
         new_article_metadata["title"] = metadata["title"]
@@ -198,8 +196,7 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         todo_title += " " + new_article_metadata["title"]
         todotxt_line += new_article_metadata["title"] + " "
 
-        # TODO: Render as a link (a project should have a rendered page (or
-        # post))
+        # TODO: Render as a link (a project should have a rendered page (or post))
         # TODO: Process Wikilinks here
         if "projects" in new_article_metadata:
             if isinstance(new_article_metadata["projects"], list):
@@ -256,13 +253,12 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
             todo_title += ' <span title="Due Date">📅</span><time datetime="' + new_article_metadata["due"].isoformat() + '">' + new_article_metadata["due"].strftime("%Y-%m-%d") + '</time>'
             todotxt_line += "due:" + new_article_metadata["due"].strftime("%Y-%m-%d") + " "
 
-        # Cancelled tasks don't have a "cancelled date", but are given a
-        # `(task_)status` of "`cancelled` and marked `completed` on the date
-        # they are cancelled.
-        if "status" in new_article_metadata and new_article_metadata["task_status"].lower() == "cancelled" and "completed" in new_article_metadata:
+        # Canceled tasks don't have a "canceled date", but are given a
+        # `(task_)status` of `canceled` and marked `completed` on the date they
+        # are canceled.
+        if "status" in new_article_metadata and new_article_metadata["task_status"].lower() in ["cancelled", "canceled"] and "completed" in new_article_metadata:
             todo_title += ' <span title="Date Cancelled">❌</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
-        # Tasks are assumed to be be both "Completed" (successfully) and
-        # "Cancelled"
+        # Tasks are assumed to be both "Completed" (successfully) and "Canceled"
         elif "completed" in new_article_metadata:
             todo_title += ' <span title="Date Completed">✅</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
 
@@ -270,7 +266,7 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
             todo_title += ' <span title="Task ID">🆔</span>' + new_article_metadata["task_id"]
             todotxt_line += "id:" + new_article_metadata["task_id"] + " "
 
-        # TODO: render these as links to the other todo items
+        # TODO: render these as links to the other to-do items
         if "depends_on" in new_article_metadata:
             todo_title += ' <span title="Depends On">⛔</span>' + ",".join(new_article_metadata["depends_on"])
             # 'p:' for "parent"
@@ -310,12 +306,12 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         self.add_static_links(new_article)
 
         self.articles.insert(0, new_article)
-        logger.debug(f"{LOG_PREFIX} {todotxt_line}")
+        logger.debug("%s %s", LOG_PREFIX, todotxt_line)
         _todotxt_lines.append(todotxt_line)
         _tasknote_count += 1
 
     # apply sorting
-    logger.debug(f'{LOG_PREFIX} sorting order: "{settings.get("ARTICLE_ORDER_BY", "reversed-date")}"')
+    logger.debug('%s sorting order: "%s"', LOG_PREFIX, settings.get("ARTICLE_ORDER_BY", "reversed-date"))
     self.articles = order_content(
         self.articles, settings.get("ARTICLE_ORDER_BY", "reversed-date")
     )
@@ -324,6 +320,6 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
 def pelican_finalized(pelican: Pelican) -> None:
     global _tasknote_count
     print(
-        "%s Processed %s tasknote%s."
-        % (LOG_PREFIX, _tasknote_count, "s" if _tasknote_count != 1 else ""),
+        "%s Processed %s tasknote%s." % 
+        (LOG_PREFIX, _tasknote_count, "s" if _tasknote_count != 1 else "")
     )
