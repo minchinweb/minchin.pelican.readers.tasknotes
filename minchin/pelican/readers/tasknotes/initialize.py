@@ -15,57 +15,57 @@ def check_settings(pelican):
     if "TASKNOTES_FOLDER" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_FOLDER"] = "tasks"
         logger.debug(
-            '%s TASKNOTES_FOLDER set to "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"])
+            '%s TASKNOTES_FOLDER set to "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"]
         )
     else:
         logger.debug(
-            '%s TASKNOTES_FOLDER previously set manually. Is "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"])
+            '%s TASKNOTES_FOLDER previously set manually. Is "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"]
         )
 
     if "TASKNOTES_SAVE_AS" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SAVE_AS"] = pelican.settings["ARTICLE_SAVE_AS"]
         logger.debug(
-            '%s TASKNOTES_SAVE_AS set to "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"])
+            '%s TASKNOTES_SAVE_AS set to "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"]
         )
     else:
         logger.debug(
-            '%s TASKNOTES_SAVE_AS previously set manually. Is "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"])
+            '%s TASKNOTES_SAVE_AS previously set manually. Is "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"]
         )
 
     if "TASKNOTES_SLUG" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SLUG"] = "task-{date:%Y%m%d%H%M}"
         logger.debug(
-            '%s TASKNOTES_SLUG set to "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"])
+            '%s TASKNOTES_SLUG set to "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"]
         )
     else:
         logger.debug(
-            '%s TASKNOTES_SLUG previously set manually. Is "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"])
+            '%s TASKNOTES_SLUG previously set manually. Is "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"]
         )
 
     if "TASKNOTES_URL" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_URL"] = pelican.settings["ARTICLE_URL"]
         logger.debug(
-            '%s TASKNOTES_URL set to "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_URL"])
+            '%s TASKNOTES_URL set to "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_URL"]
         )
     else:
         logger.debug(
-            '%s TASKNOTES_URL previously set manually. Is "%s"'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_URL"])
+            '%s TASKNOTES_URL previously set manually. Is "%s"',
+            LOG_PREFIX, pelican.settings["TASKNOTES_URL"]
         )
 
     pelican.settings["ARTICLE_EXCLUDES"] += [
         pelican.settings["TASKNOTES_FOLDER"],
     ]
     logger.debug(
-        '%s ARTICLE_EXCLUDES updated to "%s"'
-        % (LOG_PREFIX, pelican.settings["ARTICLE_EXCLUDES"])
+        '%s ARTICLE_EXCLUDES updated to "%s"',
+        LOG_PREFIX, pelican.settings["ARTICLE_EXCLUDES"]
     )
 
     # # add custom date cleaner
@@ -76,7 +76,6 @@ def check_settings(pelican):
     # pelican.settings["METADATA_PROCESSORS_MDIT"]["due"] = clean_dates
     # pelican.settings["METADATA_PROCESSORS_MDIT"]["cancelled"] = clean_dates
     # pelican.settings["METADATA_PROCESSORS_MDIT"]["completed"] = clean_dates
-
 
 
 def tasknotes_version(pelican):

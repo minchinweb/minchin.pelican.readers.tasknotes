@@ -235,5 +235,9 @@ Known Issues
 - Default slug processing means that you can't have two tasks created the same
   minutes (or Pelican will break).
 - Don't use "context" as a metadata key or it breaks Pelican link resolution.
+- Having two tasks with created in the same minute will cause Pelican to try
+  and overwrite files, and will crash Pelican. To fix, change the created times
+  of tasks so that no two tasks are created in the same minute, or alternately,
+  change the slug for Tasknotes to include the seconds as well.
 
 .. Credits

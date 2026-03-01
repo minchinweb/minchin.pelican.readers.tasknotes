@@ -158,16 +158,20 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         _data_task = " "
         # These checkboxes match the formatting from my Fancy-Checkboxes plugin
         # for Markdown-IT. They will need to be styled by the theme in use.
+        # TODO: allow these lists to be plugin settings
         if "task_status" not in new_article_metadata:
             pass
-        elif new_article_metadata["task_status"].lower() in ["in-progress", "in progress"]:
+        elif new_article_metadata["task_status"].lower() in ["in-progress", "in progress", "20-in-progress"]:
             _data_task = "/"
-        elif new_article_metadata["task_status"].lower() in ["cancelled", ]:
+        elif new_article_metadata["task_status"].lower() in ["cancelled", "canceled", "50-cancelled"]:
             _data_task = "-"
             todotxt_line += "- "  # TODO: is this the right way to show this??
-        elif new_article_metadata["task_status"].lower() in ["done", ]:
+        elif new_article_metadata["task_status"].lower() in ["done", "30-done"]:
             _data_task = "x"
             todotxt_line += "x "
+        elif new_article_metadata["task_status"].lower() in ["duplicate", "60-duplicate"]:
+            _data_task = "-"
+            todotxt_line += "- "
         else:
             # _data_task = " "
             pass
@@ -200,8 +204,8 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # TODO: Process Wikilinks here
         if "projects" in new_article_metadata:
             if isinstance(new_article_metadata["projects"], list):
-                todo_title += " " + " ".join(["+"+x for x in new_article_metadata["projects"]])
-                todotxt_line += " ".join(["+"+x for x in new_article_metadata["projects"]]) + " "
+                todo_title += " " + " ".join(["+"+x for x in new_article_metadata["projects"] if x])
+                todotxt_line += " ".join(["+"+x for x in new_article_metadata["projects"] if x]) + " "
             elif isinstance(new_article_metadata["projects"], str):
                 todo_title += " +" + new_article_metadata["projects"]
                 todotxt_line += new_article_metadata["projects"] + " "
@@ -216,8 +220,12 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
 
         if "contexts" in new_article_metadata:
             if isinstance(new_article_metadata["contexts"], list):
-                todo_title += " " + " ".join(["@"+x for x in new_article_metadata["contexts"]])
-                todotxt_line += " ".join(["@"+x for x in new_article_metadata["contexts"]]) + " "
+                try:
+                    todo_title += " " + " ".join(["@"+x for x in new_article_metadata["contexts"] if x])
+                    todotxt_line += " ".join(["@"+x for x in new_article_metadata["contexts"] if x]) + " "
+                except TypeError as e:
+                    print(f'{todo_title=} {todotxt_line=} {new_article_metadata["contexts"]=}')
+                    raise e
             elif isinstance(new_article_metadata["contexts"], str):
                 todo_title += " " + " @" + new_article_metadata["contexts"]
                 todotxt_line += " @" + new_article_metadata["contexts"] + " "
@@ -256,7 +264,8 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # Canceled tasks don't have a "canceled date", but are given a
         # `(task_)status` of `canceled` and marked `completed` on the date they
         # are canceled.
-        if "status" in new_article_metadata and new_article_metadata["task_status"].lower() in ["cancelled", "canceled"] and "completed" in new_article_metadata:
+        # TODO: separate cancelled and duplicated tasks
+        if "task_status" in new_article_metadata and new_article_metadata["task_status"].lower() in ["cancelled", "canceled", "50-cancelled", "duplicate", "60-duplicate"] and "completed" in new_article_metadata:
             todo_title += ' <span title="Date Cancelled">❌</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
         # Tasks are assumed to be both "Completed" (successfully) and "Canceled"
         elif "completed" in new_article_metadata:
