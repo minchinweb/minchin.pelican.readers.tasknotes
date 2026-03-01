@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from pelican.generators import ArticlesGenerator
 
 from pelican.contents import Article
+
 # from pelican.readers import MarkdownReader  # BaseReader
 from pelican.utils import order_content
 
@@ -134,7 +135,6 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # if "depends_on" in metadata.keys():
         #     new_article_metadata["depends_on"] = metadata["depends_on"]
 
-
         # NOTE:
         # new_article_metadata is set by pelicanconf.py
         # metadata is set from the tasknote and is given higher precedence
@@ -142,7 +142,6 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # Do this before we start trying to read from the metadata to fill out
         # the `todo_title` line
         new_article_metadata.update(metadata)
-
 
         # Assemble Tasks-style line
         # this is the presented as the "title" of the todo item, with various
@@ -161,15 +160,26 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # TODO: allow these lists to be plugin settings
         if "task_status" not in new_article_metadata:
             pass
-        elif new_article_metadata["task_status"].lower() in ["in-progress", "in progress", "20-in-progress"]:
+        elif new_article_metadata["task_status"].lower() in [
+            "in-progress",
+            "in progress",
+            "20-in-progress",
+        ]:
             _data_task = "/"
-        elif new_article_metadata["task_status"].lower() in ["cancelled", "canceled", "50-cancelled"]:
+        elif new_article_metadata["task_status"].lower() in [
+            "cancelled",
+            "canceled",
+            "50-cancelled",
+        ]:
             _data_task = "-"
             todotxt_line += "- "  # TODO: is this the right way to show this??
         elif new_article_metadata["task_status"].lower() in ["done", "30-done"]:
             _data_task = "x"
             todotxt_line += "x "
-        elif new_article_metadata["task_status"].lower() in ["duplicate", "60-duplicate"]:
+        elif new_article_metadata["task_status"].lower() in [
+            "duplicate",
+            "60-duplicate",
+        ]:
             _data_task = "-"
             todotxt_line += "- "
         else:
@@ -188,10 +198,17 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         todo_title += _todo_checkbox
 
         # priorities are removed from completed items, so they sort to the bottom
-        if "priority" in new_article_metadata and "completed" not in new_article_metadata:
+        if (
+            "priority" in new_article_metadata
+            and "completed" not in new_article_metadata
+        ):
             todotxt_line += "(" + new_article_metadata["priority"].upper()[:1] + ") "
 
-        if "completed" in new_article_metadata and new_article_metadata["completed"] and new_article_metadata["date"]:
+        if (
+            "completed" in new_article_metadata
+            and new_article_metadata["completed"]
+            and new_article_metadata["date"]
+        ):
             todotxt_line += new_article_metadata["completed"].strftime("%Y-%m-%d") + " "
 
         if new_article_metadata["date"]:
@@ -204,8 +221,13 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # TODO: Process Wikilinks here
         if "projects" in new_article_metadata:
             if isinstance(new_article_metadata["projects"], list):
-                todo_title += " " + " ".join(["+"+x for x in new_article_metadata["projects"] if x])
-                todotxt_line += " ".join(["+"+x for x in new_article_metadata["projects"] if x]) + " "
+                todo_title += " " + " ".join(
+                    ["+" + x for x in new_article_metadata["projects"] if x]
+                )
+                todotxt_line += (
+                    " ".join(["+" + x for x in new_article_metadata["projects"] if x])
+                    + " "
+                )
             elif isinstance(new_article_metadata["projects"], str):
                 todo_title += " +" + new_article_metadata["projects"]
                 todotxt_line += new_article_metadata["projects"] + " "
@@ -216,15 +238,26 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
                 tag_url = settings["SITEURL"] + "/" + tag.url
                 tag_link = f'<a href="{tag_url}" class="tasknotes-tag">#{tag.name}</a>'
                 todo_title += " " + tag_link
-        todotxt_line += " ".join(["#"+tag.name for tag in new_article_metadata["tags"]]) + " "
+        todotxt_line += (
+            " ".join(["#" + tag.name for tag in new_article_metadata["tags"]]) + " "
+        )
 
         if "contexts" in new_article_metadata:
             if isinstance(new_article_metadata["contexts"], list):
                 try:
-                    todo_title += " " + " ".join(["@"+x for x in new_article_metadata["contexts"] if x])
-                    todotxt_line += " ".join(["@"+x for x in new_article_metadata["contexts"] if x]) + " "
+                    todo_title += " " + " ".join(
+                        ["@" + x for x in new_article_metadata["contexts"] if x]
+                    )
+                    todotxt_line += (
+                        " ".join(
+                            ["@" + x for x in new_article_metadata["contexts"] if x]
+                        )
+                        + " "
+                    )
                 except TypeError as e:
-                    print(f'{todo_title=} {todotxt_line=} {new_article_metadata["contexts"]=}')
+                    print(
+                        f'{todo_title=} {todotxt_line=} {new_article_metadata["contexts"]=}'
+                    )
                     raise e
             elif isinstance(new_article_metadata["contexts"], str):
                 todo_title += " " + " @" + new_article_metadata["contexts"]
@@ -244,40 +277,92 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
             todo_title += ' <span title="Lowest Priority">⏬️</span>'
 
         if "recurrence" in new_article_metadata:
-            todo_title += ' <span title="Recurrence">🔁</span>' + new_article_metadata["recurrence"]
+            todo_title += (
+                ' <span title="Recurrence">🔁</span>'
+                + new_article_metadata["recurrence"]
+            )
             todotxt_line += "rrule:" + new_article_metadata["recurrence"] + " "
 
         if new_article_metadata["date"]:
-            todo_title += ' <span title="Created Date">➕</span><time datetime="' + new_article_metadata["date"].isoformat() + '">' + new_article_metadata["date"].strftime("%Y-%m-%d") + '</time>'
-        
+            todo_title += (
+                ' <span title="Created Date">➕</span><time datetime="'
+                + new_article_metadata["date"].isoformat()
+                + '">'
+                + new_article_metadata["date"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
+
         if "threshold" in new_article_metadata:
-            todo_title += ' <span title="Threshold (Start) Date">🛫</span><time datetime="' + new_article_metadata["threshold"].isoformat() + '">' + new_article_metadata["threshold"].strftime("%Y-%m-%d") + '</time>'
-            todotxt_line += "t:" + new_article_metadata["threshold"].strftime("%Y-%m-%d") + " "
+            todo_title += (
+                ' <span title="Threshold (Start) Date">🛫</span><time datetime="'
+                + new_article_metadata["threshold"].isoformat()
+                + '">'
+                + new_article_metadata["threshold"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
+            todotxt_line += (
+                "t:" + new_article_metadata["threshold"].strftime("%Y-%m-%d") + " "
+            )
 
         if "scheduled" in new_article_metadata:
-            todo_title += ' <span title="Scheduled Date">⏳</span><time datetime="' + new_article_metadata["scheduled"].isoformat() + '">' + new_article_metadata["scheduled"].strftime("%Y-%m-%d") + '</time>'
+            todo_title += (
+                ' <span title="Scheduled Date">⏳</span><time datetime="'
+                + new_article_metadata["scheduled"].isoformat()
+                + '">'
+                + new_article_metadata["scheduled"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
 
         if "due" in new_article_metadata:
-            todo_title += ' <span title="Due Date">📅</span><time datetime="' + new_article_metadata["due"].isoformat() + '">' + new_article_metadata["due"].strftime("%Y-%m-%d") + '</time>'
-            todotxt_line += "due:" + new_article_metadata["due"].strftime("%Y-%m-%d") + " "
+            todo_title += (
+                ' <span title="Due Date">📅</span><time datetime="'
+                + new_article_metadata["due"].isoformat()
+                + '">'
+                + new_article_metadata["due"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
+            todotxt_line += (
+                "due:" + new_article_metadata["due"].strftime("%Y-%m-%d") + " "
+            )
 
         # Canceled tasks don't have a "canceled date", but are given a
         # `(task_)status` of `canceled` and marked `completed` on the date they
         # are canceled.
         # TODO: separate cancelled and duplicated tasks
-        if "task_status" in new_article_metadata and new_article_metadata["task_status"].lower() in ["cancelled", "canceled", "50-cancelled", "duplicate", "60-duplicate"] and "completed" in new_article_metadata:
-            todo_title += ' <span title="Date Cancelled">❌</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
+        if (
+            "task_status" in new_article_metadata
+            and new_article_metadata["task_status"].lower()
+            in ["cancelled", "canceled", "50-cancelled", "duplicate", "60-duplicate"]
+            and "completed" in new_article_metadata
+        ):
+            todo_title += (
+                ' <span title="Date Cancelled">❌</span><time datetime="'
+                + new_article_metadata["completed"].isoformat()
+                + '">'
+                + new_article_metadata["completed"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
         # Tasks are assumed to be both "Completed" (successfully) and "Canceled"
         elif "completed" in new_article_metadata:
-            todo_title += ' <span title="Date Completed">✅</span><time datetime="' + new_article_metadata["completed"].isoformat() + '">' + new_article_metadata["completed"].strftime("%Y-%m-%d") + '</time>'
+            todo_title += (
+                ' <span title="Date Completed">✅</span><time datetime="'
+                + new_article_metadata["completed"].isoformat()
+                + '">'
+                + new_article_metadata["completed"].strftime("%Y-%m-%d")
+                + "</time>"
+            )
 
         if "task_id" in new_article_metadata:
-            todo_title += ' <span title="Task ID">🆔</span>' + new_article_metadata["task_id"]
+            todo_title += (
+                ' <span title="Task ID">🆔</span>' + new_article_metadata["task_id"]
+            )
             todotxt_line += "id:" + new_article_metadata["task_id"] + " "
 
         # TODO: render these as links to the other to-do items
         if "depends_on" in new_article_metadata:
-            todo_title += ' <span title="Depends On">⛔</span>' + ",".join(new_article_metadata["depends_on"])
+            todo_title += ' <span title="Depends On">⛔</span>' + ",".join(
+                new_article_metadata["depends_on"]
+            )
             # 'p:' for "parent"
             todotxt_line += "p:" + ",".join(new_article_metadata["depends_on"]) + " "
 
@@ -320,7 +405,11 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         _tasknote_count += 1
 
     # apply sorting
-    logger.debug('%s sorting order: "%s"', LOG_PREFIX, settings.get("ARTICLE_ORDER_BY", "reversed-date"))
+    logger.debug(
+        '%s sorting order: "%s"',
+        LOG_PREFIX,
+        settings.get("ARTICLE_ORDER_BY", "reversed-date"),
+    )
     self.articles = order_content(
         self.articles, settings.get("ARTICLE_ORDER_BY", "reversed-date")
     )
@@ -329,6 +418,6 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
 def pelican_finalized(pelican: Pelican) -> None:
     global _tasknote_count
     print(
-        "%s Processed %s tasknote%s." % 
-        (LOG_PREFIX, _tasknote_count, "s" if _tasknote_count != 1 else "")
+        "%s Processed %s tasknote%s."
+        % (LOG_PREFIX, _tasknote_count, "s" if _tasknote_count != 1 else "")
     )

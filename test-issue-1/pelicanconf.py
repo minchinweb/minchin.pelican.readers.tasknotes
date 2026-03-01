@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 
-from minchin.pelican.readers.commonmark.constants import COMMONMARK_DEFAULT_CONFIG
 import mdit_py_plugins.anchors
 import mdit_py_plugins.deflist
-import minchin.md_it.fancy_tasklists
 
 from pelican.settings import DEFAULT_CONFIG
 
+import minchin.md_it.fancy_tasklists
+from minchin.pelican.readers.commonmark.constants import COMMONMARK_DEFAULT_CONFIG
+
 COMMONMARK = COMMONMARK_DEFAULT_CONFIG
-COMMONMARK["extensions"].extend([
-    minchin.md_it.fancy_tasklists.fancy_tasklists_plugin,
-    mdit_py_plugins.deflist.deflist_plugin,
-    mdit_py_plugins.anchors.anchors_plugin,
-])
+COMMONMARK["extensions"].extend(
+    [
+        minchin.md_it.fancy_tasklists.fancy_tasklists_plugin,
+        mdit_py_plugins.deflist.deflist_plugin,
+        mdit_py_plugins.anchors.anchors_plugin,
+    ]
+)
 
 _OUTPUT_PATH = "output"
 PATH = "."  # source path
@@ -34,12 +37,11 @@ _VIRTUAL_ENVS = [
     "zz_test\\.zz_output",
     "zz_test\\output",
     "output",
-
     "_templates",
 ]
 
-AUTHOR = u"WM"
-SITENAME = u"Jrnl Notebook"
+AUTHOR = "WM"
+SITENAME = "Jrnl Notebook"
 SITEURL = "//localhost:8000"
 
 # caching
@@ -52,7 +54,7 @@ CHECK_MODIFIED_METHOD = "md5"
 TIMEZONE = "America/Edmonton"
 
 DEFAULT_LANG = "en"
-PATH_METADATA = r'(?P<category>journal|zettel|Daily)/((?P<date>\d{4}/\d{2}/\d{2}|\d{8}[0-2]\d{3}).md|.*)'
+PATH_METADATA = r"(?P<category>journal|zettel|Daily)/((?P<date>\d{4}/\d{2}/\d{2}|\d{8}[0-2]\d{3}).md|.*)"
 USE_FOLDER_AS_CATEGORY = False
 
 # Feed generation is usually not desired when developing
@@ -138,25 +140,29 @@ PAGINATED_TEMPLATES = {
     "tag": None,
     "category": None,
     "author": None,
-    #"archives": None,
+    # "archives": None,
 }
 PAGINATION_PATTERNS = (
-    (1, '{url}', '{save_as}'),
-    (2, '{base_name}/{number}/', '{base_name}/{number}/index.html'),
+    (1, "{url}", "{save_as}"),
+    (2, "{base_name}/{number}/", "{base_name}/{number}/index.html"),
 )
 
 PAGE_PATHS = [
     "pages",
 ]
-ARTICLE_EXCLUDES = [
-    _OUTPUT_PATH,
-] + PAGE_PATHS + _VIRTUAL_ENVS
+ARTICLE_EXCLUDES = (
+    [
+        _OUTPUT_PATH,
+    ]
+    + PAGE_PATHS
+    + _VIRTUAL_ENVS
+)
 PAGE_EXCLUDES = [
     _OUTPUT_PATH,
 ] + _VIRTUAL_ENVS
 
 STATIC_PATHS = [
-    'images',  # only default entry
+    "images",  # only default entry
 ]
 
 OUTPUT_PATH = _OUTPUT_PATH

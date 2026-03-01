@@ -1,7 +1,8 @@
 import logging
 
-from .constants import LOG_PREFIX, __url__, __version__
 from minchin.pelican.readers.commonmark.reader import clean_dates
+
+from .constants import LOG_PREFIX, __url__, __version__
 
 logger = logging.getLogger(__name__)
 
@@ -16,48 +17,56 @@ def check_settings(pelican):
         pelican.settings["TASKNOTES_FOLDER"] = "tasks"
         logger.debug(
             '%s TASKNOTES_FOLDER set to "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_FOLDER"],
         )
     else:
         logger.debug(
             '%s TASKNOTES_FOLDER previously set manually. Is "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_FOLDER"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_FOLDER"],
         )
 
     if "TASKNOTES_SAVE_AS" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SAVE_AS"] = pelican.settings["ARTICLE_SAVE_AS"]
         logger.debug(
             '%s TASKNOTES_SAVE_AS set to "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_SAVE_AS"],
         )
     else:
         logger.debug(
             '%s TASKNOTES_SAVE_AS previously set manually. Is "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_SAVE_AS"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_SAVE_AS"],
         )
 
     if "TASKNOTES_SLUG" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_SLUG"] = "task-{date:%Y%m%d%H%M}"
         logger.debug(
             '%s TASKNOTES_SLUG set to "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_SLUG"],
         )
     else:
         logger.debug(
             '%s TASKNOTES_SLUG previously set manually. Is "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_SLUG"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_SLUG"],
         )
 
     if "TASKNOTES_URL" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_URL"] = pelican.settings["ARTICLE_URL"]
         logger.debug(
             '%s TASKNOTES_URL set to "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_URL"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_URL"],
         )
     else:
         logger.debug(
             '%s TASKNOTES_URL previously set manually. Is "%s"',
-            LOG_PREFIX, pelican.settings["TASKNOTES_URL"]
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_URL"],
         )
 
     pelican.settings["ARTICLE_EXCLUDES"] += [
@@ -65,7 +74,8 @@ def check_settings(pelican):
     ]
     logger.debug(
         '%s ARTICLE_EXCLUDES updated to "%s"',
-        LOG_PREFIX, pelican.settings["ARTICLE_EXCLUDES"]
+        LOG_PREFIX,
+        pelican.settings["ARTICLE_EXCLUDES"],
     )
 
     # # add custom date cleaner
