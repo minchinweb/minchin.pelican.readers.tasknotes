@@ -54,7 +54,7 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # if article is None:
 
         # content, metadata = myMarkdownReader.read(source_path=post)
-        content, metadata = myMarkdownReader.read(filename=post_full_filename)
+        content, metadata = myMarkdownReader.read(post_full_filename)
 
         logger.log(5, f"{LOG_PREFIX} {metadata}")
 
@@ -209,9 +209,9 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
                 todo_title += " +" + new_article_metadata["projects"]
                 todotxt_line += new_article_metadata["projects"] + " "
 
-        if "tags" in metadata.keys():
+        if "tags" in new_article_metadata.keys():
             # metadata["tags"] is already a list of `pelican.urlwrappers.Tag`
-            for tag in metadata["tags"]:
+            for tag in new_article_metadata["tags"]:
                 tag_url = settings["SITEURL"] + "/" + tag.url
                 tag_link = f'<a href="{tag_url}" class="tasknotes-tag">#{tag.name}</a>'
                 todo_title += " " + tag_link
@@ -281,6 +281,12 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
 
         new_article_metadata["summary"] = todo_title
 
+        # overrides "context" key shared to Jinja template processing
+        try:
+            del new_article_metadata["context"]
+        except KeyError:
+            pass
+
         new_article = Article(
             content or "",
             new_article_metadata,
@@ -297,6 +303,9 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
 
         # these should be run by the generator, rather than here
         # to solve issue of Jinja breaking due to KeyError "generated_content"
+        # Ensure generated_content exists in context
+        if "generated_content" not in self.context:
+            self.context["generated_content"] = {}
         self.add_source_path(new_article)
         self.add_static_links(new_article)
 

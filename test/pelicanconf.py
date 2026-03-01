@@ -58,6 +58,23 @@ DISPLAY_CATEGORY_IN_BREADCRUMBS = True
 
 HIDE_SIDEBAR = True
 
+MARKDOWN = {
+    "extension_configs": {
+        "markdown.extensions.codehilite": {"css_class": "highlight"},
+        "markdown.extensions.extra": {},
+        "markdown.extensions.meta": {},
+        "pymdownx.superfences": {},
+        "pymdownx.caret": {},
+        "pymdownx.tilde": {},
+        "markdown.extensions.smarty": {},
+        "pymdownx.arithmatex": {},
+        "pymdownx.smartsymbols": {},
+        "markdown.extensions.def_list": {},
+    },
+    "output_format": "html5",
+    "lazy_ol": False,
+}
 
 # ARTICLE_ORDER_BY = 'reversed-date'  # should be default value
 # ARTICLE_ORDER_BY = 'date'
+DISPLAY_ARTICLE_INFO_ON_INDEX = True

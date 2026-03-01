@@ -234,5 +234,6 @@ Known Issues
   have to use it for the rest of your site as well.
 - Default slug processing means that you can't have two tasks created the same
   minutes (or Pelican will break).
+- Don't use "context" as a metadata key or it breaks Pelican link resolution.
 
 .. Credits
