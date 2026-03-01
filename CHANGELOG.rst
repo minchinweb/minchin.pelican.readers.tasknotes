@@ -5,7 +5,7 @@ Changelog for Tasknotes Reader
 
 .. this is in "release" (for Sphinx) format
 
-- :release:`1.0.0 <20xx-xx-xx>`
+- :release:`0.1.1 <2026-03-01>`
 - :support:`-` move from ``setup.py`` to ``pyproject.toml``
 - :feature:`-` allow configuraiton of status.
 - :bug:`1 major` allow cross-linking for Tasknotes

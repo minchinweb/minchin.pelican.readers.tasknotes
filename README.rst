@@ -24,6 +24,8 @@ Pelican Tasknotes Reader
    :target: https://pypi.python.org/pypi/minchin.pelican.readers.tasknotes/
    :alt: Download Count
 
+Note that this relies on my CommonMark reader.
+
 Quickstart
 ----------
 

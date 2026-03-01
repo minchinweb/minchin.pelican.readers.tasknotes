@@ -16,4 +16,5 @@ releaser:
             - wheel
             - semantic-version
             - markdown
+            - minchin.pelican.readers.commonmark
         pypi:
