@@ -396,6 +396,11 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # move trailing space, if any
         todotxt_line = todotxt_line.rstrip()
 
+        # run through Markdown rendered (to fix links)
+        md = myMarkdownReader.get_processor()
+        todo_title = md.render(todo_title)
+        todo_title = myMarkdownReader.drop_frame_html_tags(todo_title, p=True)
+
         new_article_metadata["summary"] = todo_title
 
         # overrides "context" key shared to Jinja template processing
