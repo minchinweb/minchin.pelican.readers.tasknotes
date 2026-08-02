@@ -223,13 +223,25 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         if "projects" in new_article_metadata:
             if isinstance(new_article_metadata["projects"], list):
                 todo_title += " " + " ".join(
-                    ["+" + x for x in new_article_metadata["projects"] if x]
+                    [
+                        "+" + x
+                        for x in new_article_metadata["projects"]
+                        if x not in ["null", None]
+                    ]
                 )
                 todotxt_line += (
-                    " ".join(["+" + x for x in new_article_metadata["projects"] if x])
+                    " ".join(
+                        [
+                            "+" + x
+                            for x in new_article_metadata["projects"]
+                            if x not in ["null", None]
+                        ]
+                    )
                     + " "
                 )
-            elif isinstance(new_article_metadata["projects"], str):
+            elif isinstance(
+                new_article_metadata["projects"], str
+            ) and new_article_metadata["projects"] not in ["null", None]:
                 todo_title += " +" + new_article_metadata["projects"]
                 todotxt_line += new_article_metadata["projects"] + " "
 
@@ -247,11 +259,19 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
             if isinstance(new_article_metadata["contexts"], list):
                 try:
                     todo_title += " " + " ".join(
-                        ["@" + x for x in new_article_metadata["contexts"] if x]
+                        [
+                            "@" + x
+                            for x in new_article_metadata["contexts"]
+                            if x not in ["null", None]
+                        ]
                     )
                     todotxt_line += (
                         " ".join(
-                            ["@" + x for x in new_article_metadata["contexts"] if x]
+                            [
+                                "@" + x
+                                for x in new_article_metadata["contexts"]
+                                if x not in ["null", None]
+                            ]
                         )
                         + " "
                     )
@@ -260,7 +280,9 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
                         f'{todo_title=} {todotxt_line=} {new_article_metadata["contexts"]=}'
                     )
                     raise e
-            elif isinstance(new_article_metadata["contexts"], str):
+            elif isinstance(
+                new_article_metadata["contexts"], str
+            ) and new_article_metadata["contexts"] not in ["null", None]:
                 todo_title += " " + " @" + new_article_metadata["contexts"]
                 todotxt_line += " @" + new_article_metadata["contexts"] + " "
 
