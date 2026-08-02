@@ -1,6 +1,6 @@
 # metadata
 __title__ = "minchin.pelican.readers.tasknotes"
-__version__ = "0.1.2-dev"
+__version__ = "0.1.2"
 __description__ = "Tasknotes for Pelican"
 __author__ = "W. Minchin"
 __email__ = "w_minchin@hotmail.com"
