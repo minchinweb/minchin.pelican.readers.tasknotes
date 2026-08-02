@@ -55,7 +55,7 @@ def addTaskNoteArticles(self: ArticlesGenerator) -> None:
         # if article is None:
 
         # content, metadata = myMarkdownReader.read(source_path=post)
-        content, metadata = myMarkdownReader.read(post_full_filename)
+        content, metadata = myMarkdownReader.read(source_path=post_full_filename)
 
         new_article_metadata = {
             "category": myBaseReader.process_metadata(

@@ -5,6 +5,7 @@ Changelog for Tasknotes Reader
 
 .. this is in "release" (for Sphinx) format
 
+- :support:`-` require Commonmark reader v2.3.1
 - :bug:`-` ignore ``null`` (and ``None``) for projects and contexts
 
 - :release:`0.1.1 <2026-03-01>`
