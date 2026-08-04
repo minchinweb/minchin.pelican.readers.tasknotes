@@ -10,7 +10,9 @@ __license__ = "MIT License"
 # Configuration Defaults
 LOG_PREFIX = "[TaskNotes]"
 
-DEFAULT_TASKNOTES_CATEGORY = "tasks"
+DEFAULT_TASKNOTES_FOLDERS: list[str] = [
+    "tasks",
+]
 
 DEFAULT_IN_PROGRESS_STATUS = [
     "in-progress",

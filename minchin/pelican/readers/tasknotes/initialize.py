@@ -7,6 +7,7 @@ from .constants import (
     DEFAULT_DONE_STATUS,
     DEFAULT_DUPLICATE_STATUS,
     DEFAULT_IN_PROGRESS_STATUS,
+    DEFAULT_TASKNOTES_FOLDERS,
     LOG_PREFIX,
     __url__,
     __version__,
@@ -21,18 +22,27 @@ def check_settings(pelican):
     """
     logger.debug("%s massaging settings, setting defaults." % LOG_PREFIX)
 
-    if "TASKNOTES_FOLDER" not in pelican.settings.keys():
-        pelican.settings["TASKNOTES_FOLDER"] = "tasks"
+    if "TASKNOTES_FOLDERS" not in pelican.settings.keys():
+        if "TASKNOTES_FOLDER" in pelican.settings.keys():
+            logger.warning(
+                '%s "TASKNOTES_FOLDER" setting is deprecated. Use "TASKNOTES_FOLDERS" (with an "s") instead.',
+                LOG_PREFIX,
+            )
+            pelican.settings["TASKNOTES_FOLDERS"] = [
+                pelican.settings["TASKNOTES_FOLDER"]
+            ]
+        else:
+            pelican.settings["TASKNOTES_FOLDERS"] = DEFAULT_TASKNOTES_FOLDERS
         logger.debug(
-            '%s TASKNOTES_FOLDER set to "%s"',
+            '%s TASKNOTES_FOLDERS set to "%s"',
             LOG_PREFIX,
-            pelican.settings["TASKNOTES_FOLDER"],
+            pelican.settings["TASKNOTES_FOLDERS"],
         )
     else:
         logger.debug(
-            '%s TASKNOTES_FOLDER previously set manually. Is "%s"',
+            '%s TASKNOTES_FOLDERS previously set manually. Is "%s"',
             LOG_PREFIX,
-            pelican.settings["TASKNOTES_FOLDER"],
+            pelican.settings["TASKNOTES_FOLDERS"],
         )
 
     if "TASKNOTES_SAVE_AS" not in pelican.settings.keys():
@@ -126,7 +136,7 @@ def check_settings(pelican):
         )
 
     pelican.settings["ARTICLE_EXCLUDES"] += [
-        pelican.settings["TASKNOTES_FOLDER"],
+        x for x in pelican.settings["TASKNOTES_FOLDERS"]
     ]
     logger.debug(
         '%s ARTICLE_EXCLUDES updated to "%s"',

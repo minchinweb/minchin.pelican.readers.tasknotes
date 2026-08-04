@@ -5,6 +5,8 @@ Changelog for Tasknotes Reader
 
 .. this is in "release" (for Sphinx) format
 
+- :support:`-` deprecate ``TASKNOTES_FOLDER`` setting; use
+  ``TASKNOTES_FOLDERS`` (with an "s") instead.
 - :release:`0.1.2 <2026-08-01>`
 - :bug:`2` Resolve Markdown links (to projects, etc)
 - :support:`2` require Commonmark reader v2.3.1

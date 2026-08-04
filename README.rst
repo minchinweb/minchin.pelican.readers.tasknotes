@@ -173,9 +173,8 @@ TASKNOTES_DUPLICATE_STATUS = ["duplicate", "60-duplicate"]
    Status that are considered "in progress". c.f.
    ``TASKNOTES_IN_PROGRESS_STATUS``, ``TASKNOTES_IN_CANCELLED_STATUS``, and
    ``TASKNOTES_DONE_STATUS``.
-TASKNOTES_FOLDER = "tasks"
-   Folder containing your tasknotes, relative to your content root
-   folder.
+TASKNOTES_FOLDERS = ["tasks", ]
+   Folders containing your tasknotes, relative to your content root folder.
 TASKNOTES_IN_PROGRESS_STATUS = ["in-progress", "in progress", "20-in-progress"]
    Status that are considered "in progress". c.f.
    ``TASKNOTES_IN_CANCELLED_STATUS``, ``TASKNOTES_DUPLICATE_STATUS``, and
