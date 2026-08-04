@@ -13,22 +13,23 @@ LOG_PREFIX = "[TaskNotes]"
 DEFAULT_TASKNOTES_FOLDERS: list[str] = [
     "tasks",
 ]
+DEFAULT_TASKNOTES_CATEGORY: str = "tasks"
 
-DEFAULT_IN_PROGRESS_STATUS = [
+DEFAULT_IN_PROGRESS_STATUS: list[str] = [
     "in-progress",
     "in progress",
     "20-in-progress",
 ]
-DEFAULT_CANCELLED_STATUS = [
+DEFAULT_CANCELLED_STATUS: list[str] = [
     "cancelled",
     "canceled",
     "50-cancelled",
 ]
-DEFAULT_DUPLICATE_STATUS = [
+DEFAULT_DUPLICATE_STATUS: list[str] = [
     "duplicate",
     "60-duplicate",
 ]
-DEFAULT_DONE_STATUS = [
+DEFAULT_DONE_STATUS: list[str] = [
     "done",
     "30-done",
 ]

@@ -20,7 +20,7 @@ def check_settings(pelican):
     """
     Insert defaults in Pelican settings, as needed.
     """
-    logger.debug("%s massaging settings, setting defaults." % LOG_PREFIX)
+    logger.debug("%s massaging settings, setting defaults.", LOG_PREFIX)
 
     if "TASKNOTES_FOLDERS" not in pelican.settings.keys():
         if "TASKNOTES_FOLDER" in pelican.settings.keys():
@@ -165,23 +165,27 @@ def tasknotes_version(pelican):
     if "TASKNOTES_VERSION" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_VERSION"] = __version__
         logger.debug(
-            '%s Adding Tasknotes version "%s" to context.'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_VERSION"])
+            '%s Adding Tasknotes version "%s" to context.',
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_VERSION"],
         )
     else:
         logger.debug(
-            '%s TASKNOTES_VERSION already defined. Is "%s".'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_VERSION"])
+            '%s TASKNOTES_VERSION already defined. Is "%s".',
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_VERSION"],
         )
 
     if "TASKNOTES_DEV_URL" not in pelican.settings.keys():
         pelican.settings["TASKNOTES_DEV_URL"] = __url__
         logger.debug(
-            '%s Adding Tasknotes Dev URL "%s" to context.'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_DEV_URL"])
+            '%s Adding Tasknotes Dev URL "%s" to context.',
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_DEV_URL"],
         )
     else:
         logger.debug(
-            '%s TASKNOTES_DEV_URL already defined. Is "%s".'
-            % (LOG_PREFIX, pelican.settings["TASKNOTES_DEV_URL"])
+            '%s TASKNOTES_DEV_URL already defined. Is "%s".',
+            LOG_PREFIX,
+            pelican.settings["TASKNOTES_DEV_URL"],
         )

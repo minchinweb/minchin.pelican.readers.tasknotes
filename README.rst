@@ -239,5 +239,6 @@ Known Issues
   and overwrite files, and will crash Pelican. To fix, change the created times
   of tasks so that no two tasks are created in the same minute, or alternately,
   change the slug for Tasknotes to include the seconds as well.
+- Doesn't processs Wiki-style links (for projects, etc)
 
 .. Credits
